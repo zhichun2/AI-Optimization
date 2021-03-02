@@ -151,8 +151,10 @@ def solveLP(constraints, cost):
     "*** YOUR CODE HERE ***"
     #for each intersection in the list, add up a total and find the minimum
     feasibleIntersections = findFeasibleIntersections(constraints)
+    if (len(feasibleIntersections) == 0):
+        return None
     minCost = math.inf
-    minPoint = feasibleIntersections[0]
+    minPoint = None
     for point in feasibleIntersections:
         cur_cost = np.dot(cost, point)
         print(cur_cost, minCost)
@@ -161,8 +163,7 @@ def solveLP(constraints, cost):
             minCost = cur_cost
             minPoint = point
             print(minPoint)
-    return minPoint
-    util.raiseNotDefined()
+    return (minPoint, minCost)
 
 def wordProblemLP():
     """
