@@ -14,6 +14,7 @@
 
 import numpy as np
 import itertools
+import math
 
 import pacmanPlot
 import graphicsUtils
@@ -45,7 +46,33 @@ def findIntersections(constraints):
 
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    #first create the whole A and b(only one col) matrix with 
+    #then select pairs of rows of A and corresponding rows of b to solve
+    #collect all intersections in a list
+    #res: to save the list of intersections we've found
+    res = []
+    rank = len(constraints)
+    #number of variables, N-D
+    numVars = len(constraints[0][0])
+    A = np.zeros((rank,numVars))
+    b = np.zeros((rank,1))
+    numVars = len(constraints[0][0])
+    for i in range(rank):
+        A[i] = constraints[i][0]
+        b[i] = constraints[i][1]
+    combinations = itertools.combinations(range(rank),numVars)
+    for combo in combinations:
+        A_temp = A[combo, :]
+        b_temp = b[combo, :]
+        full_rank = np.linalg.matrix_rank(A_temp)
+        if (full_rank == numVars):
+            x = np.linalg.solve(A_temp,b_temp)
+            newX = []
+            for i in range(len(x)):
+                newX.append(x[i][0])
+            res.append(tuple(newX))
+    return res
+    #util.raiseNotDefined()
 
 def findFeasibleIntersections(constraints):
     """
@@ -67,7 +94,33 @@ def findFeasibleIntersections(constraints):
 
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    res = []
+    rank = len(constraints)
+    #number of variables, N-D
+    numVars = len(constraints[0][0])
+    A = np.zeros((rank,numVars))
+    b = np.zeros((rank,1))
+    numVars = len(constraints[0][0])
+    for i in range(rank):
+        A[i] = constraints[i][0]
+        b[i] = constraints[i][1]
+    allIntersections = findIntersections(constraints)
+    for point in allIntersections:
+        inbound = True
+        for i in range(rank):
+            A_temp = A[i]
+            limit = b[i][0]
+            total = np.dot(A_temp,point)
+            if (total > limit):
+                inbound = False
+                break
+        if (inbound == True):
+            res.append(point)
+    return res
+    #for all intersections, apply each constraint, if any of them doesn't satisfy
+    #then don't add it to the new result
+
+    #util.raiseNotDefined()
 
 def solveLP(constraints, cost):
     """
@@ -96,6 +149,19 @@ def solveLP(constraints, cost):
 
     """
     "*** YOUR CODE HERE ***"
+    #for each intersection in the list, add up a total and find the minimum
+    feasibleIntersections = findFeasibleIntersections(constraints)
+    minCost = math.inf
+    minPoint = feasibleIntersections[0]
+    for point in feasibleIntersections:
+        cur_cost = np.dot(cost, point)
+        print(cur_cost, minCost)
+        if (cur_cost < minCost):
+            print("smaller")
+            minCost = cur_cost
+            minPoint = point
+            print(minPoint)
+    return minPoint
     util.raiseNotDefined()
 
 def wordProblemLP():
@@ -227,3 +293,4 @@ if __name__ == "__main__":
     print(solveIP(constraints, (3,5)))
     print()
     print(wordProblemIP())
+
