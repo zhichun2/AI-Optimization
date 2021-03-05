@@ -181,8 +181,11 @@ def wordProblemLP():
         i.e. not infinity.
 
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    constraints = (((-1, 0), -20), ((0, -1), -15.5), ((2.5, 2.5), 100), ((0.5, 0.25), 50))
+    cost = (-7, -4)
+    point, money = solveLP(constraints, cost)[0], solveLP(constraints, cost)[1]
+    return (point, -money)
+    #util.raiseNotDefined()
 
 
 def solveIP(constraints, cost):
