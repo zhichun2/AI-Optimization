@@ -216,7 +216,60 @@ def solveIP(constraints, cost):
 
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+def solveIP(constraints, cost):
+    """
+    Given a list of linear inequality constraints and a cost vector,
+    use the branch and bound algorithm to find a feasible point with
+    interger values that minimizes the objective.
+    Input: A list of constraints. Each constraint has the form:
+        ((a1, a2, ..., aN), b).
+        where the N-dimensional point (x1, x2, ..., xN) is feasible
+        if a1*x1 + a2*x2 + ... + aN*xN <= b for all constraints.
+        A tuple of cost coefficients: (c1, c2, ..., cN) where
+        [c1, c2, ..., cN]^T is the cost vector that helps the
+        objective function as cost^T*x.
+    Output: A tuple of an N-dimensional optimal point and the 
+        corresponding objective value at that point.
+        One N-demensional point (x1, x2, ..., xN) which yields
+        minimum value for the objective function.
+        Return None if there is no feasible solution.
+        You may assume that if a solution exists, it will be bounded,
+        i.e. not infinity.
+    You can take advantage of your solveLP function.
+    """
+    "*** YOUR CODE HERE ***"
+    #need a priority queue
+    queue = util.PriorityQueue()
+    queue.push(solveLP(constraints, cost))
+    if (queue.isEmpty()):
+        return "infeasible"
+    candidate = queue.pop()
+    minPoint = candidate[0]
+    minCost = candidate[1]
+    for i in len(minPoint):
+        if not isinstance(minPoint[i], int):
+            #add two branch
+            #left and right A
+            low = floor(minPoint[i])
+            high = ceil(minPoint[i])
+            oldA = copy.deepcopy(constraints[0])
+            lowArr = [0]*len(constraints[0])
+            highArr = [0]*len(constraints[0])
+            lowArr[i] = 1
+            highArr[i] = -1
+            lowA = oldA+(lowArr,)
+            highA = oldA+(highArr,)
+            #left and right b
+            lowb = copy.deepcopy(constraints[1])
+            highb = copy.deepcopy(constraints[1])
+            lowb.append(low)
+            highb.append(-1*high)
+            
+            queue.push((lowA, lowb))
+            queue.push((highA, highb))
+
+
+    return candidate
 
 def wordProblemIP():
     """
